@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 def getDataClusteringFromDatabase():
-    laravel_api_url = "http://127.0.0.1:8000/api/get-data-clustering"
+    laravel_api_url = "https://sirehatcerdas.online/api/get-data-clustering"
 
     try:
         response = requests.get(laravel_api_url)
@@ -92,16 +92,19 @@ def count_most_common(clustered_data_per_month):
 
 @app.route("/clustering", methods=["GET"])
 def clustering():
-    kunjungan = getDataClusteringFromDatabase()
+    try:
+        kunjungan = getDataClusteringFromDatabase()
 
-    grouped_data = group_by_month(kunjungan)
-    transformed_data = transform_data(grouped_data)
+        grouped_data = group_by_month(kunjungan)
+        transformed_data = transform_data(grouped_data)
 
-    clustered_data_per_month = cluster_per_month(transformed_data)
+        clustered_data_per_month = cluster_per_month(transformed_data)
 
-    most_common_data_per_month = count_most_common(clustered_data_per_month)
+        most_common_data_per_month = count_most_common(clustered_data_per_month)
 
-    return jsonify(most_common_data_per_month)
+        return jsonify(most_common_data_per_month)
+    except Exception as e:
+        return jsonify("Error ")
     
 
 if __name__ == "__main__":
